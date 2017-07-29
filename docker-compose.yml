@@ -12,8 +12,8 @@ services:
     image: lsioarmhf/sonarr
     container_name: "sonarr"
     volumes:
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.sonarr/config:/config
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.sonarr/downloads:/downloads
+      - ${VOLUME}/.sonarr/config:/config
+      - ${VOLUME}/.sonarr/downloads:/downloads
     ports:
       - "8989:8989"
     environment:
@@ -23,9 +23,9 @@ services:
     image: lsioarmhf/transmission
     container_name: transmission
     volumes:
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.transmission/config:/config
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.transmission/downloads:/downloads
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.transmission/watch:/watch
+      - ${VOLUME}/.transmission/config:/config
+      - ${VOLUME}/.transmission/downloads:/downloads
+      - ${VOLUME}/.transmission/watch:/watch
     ports:
       - "9091:9091"
       - "51413:51413"
@@ -38,8 +38,8 @@ services:
     image: lsioarmhf/jackett
     container_name: jackett
     volumes:
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.jackett/config:/config
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.jackett/downloads/:/downloads
+      - ${VOLUME}/.jackett/config:/config
+      - ${VOLUME}/.jackett/downloads/:/downloads
     ports:
       - "9117:9117"
     environment:
@@ -50,9 +50,9 @@ services:
     image: lsioarmhf/radarr
     container_name: radarr
     volumes:
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/config:/config
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/downloads:/downloads
-      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/movies:/movies
+      - ${VOLUME}/.radarr/config:/config
+      - ${VOLUME}/.radarr/downloads:/downloads
+      - ${VOLUME}/.radarr/movies:/movies
     ports:
       - 7878:7878
     environment:
