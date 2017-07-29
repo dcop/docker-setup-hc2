@@ -1,0 +1,61 @@
+version: '2'
+services:
+  portainer:
+    image: portainer/portainer:arm
+    container_name: "portainer-app"
+    command: --templates http://templates/templates.json
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9000:9000"
+  sonarr:
+    image: lsioarmhf/sonarr
+    container_name: "sonarr"
+    volumes:
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.sonarr/config:/config
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.sonarr/downloads:/downloads
+    ports:
+      - "8989:8989"
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+  transmission:
+    image: lsioarmhf/transmission
+    container_name: transmission
+    volumes:
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.transmission/config:/config
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.transmission/downloads:/downloads
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.transmission/watch:/watch
+    ports:
+      - "9091:9091"
+      - "51413:51413"
+      - "51413:51413/udp"
+    environment:
+      - TZ=${TZ}
+      - PGID=${PGID}
+      - PUID=${PUID}
+  jackett:
+    image: lsioarmhf/jackett
+    container_name: jackett
+    volumes:
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.jackett/config:/config
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/.jackett/downloads/:/downloads
+    ports:
+      - "9117:9117"
+    environment:
+      - TZ=${TZ}
+      - PGID=${PGID}
+      - PUID=${PUID}
+  radarr:
+    image: lsioarmhf/radarr
+    container_name: radarr
+    volumes:
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/config:/config
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/downloads:/downloads
+      - /srv/dev-disk-by-id-ata-ST1000LM014-SSHD-8GB_W38172SG-part1/movies:/movies
+    ports:
+      - 7878:7878
+    environment:
+      - TZ=${TZ}
+      - PGID=${PGID}
+      - PUID=${PUID}
