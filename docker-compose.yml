@@ -8,7 +8,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "9000:9000"
+    restart: always
+    network_mode: host
   sonarr:
+    network_mode: host
     image: lsioarmhf/sonarr
     container_name: "sonarr"
     volumes:
@@ -19,7 +22,9 @@ services:
     environment:
       - PGID=${PGID}
       - PUID=${PUID}
+    restart: always
   transmission:
+    network_mode: host
     image: lsioarmhf/transmission
     container_name: transmission
     volumes:
@@ -34,7 +39,9 @@ services:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
+    restart: always
   jackett:
+    network_mode: host
     image: lsioarmhf/jackett
     container_name: jackett
     volumes:
@@ -46,7 +53,9 @@ services:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
+    restart: always
   radarr:
+    network_mode: host
     image: lsioarmhf/radarr
     container_name: radarr
     volumes:
@@ -59,3 +68,31 @@ services:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
+    restart: always
+  plex:
+    network_mode: host
+    image: lsisoarmhf/plex
+    container_name: plex
+    volumes:
+      - ${VOLUME}/.plex/config:/config
+      - ${VOLUME}/.plex/tv:/data/tv
+      - ${VOLUME}/.plex/x264:/data/x264
+      - ${VOLUME}/.plex/xvid:/data/xvid
+    restart: always
+    environment:
+      - TZ=${TZ}
+      - PGID=${PGID}
+      - PUID=${PUID}
+  organizr:
+    network_mode: host
+    image: lsioarmhf/organizr
+    container_name: organizr
+    volumes:
+      - ${VOLUME}/.organizr/config:/config
+    ports: 
+      - 80:80
+    environment:
+      - TZ=${TZ}
+      - PGID=${PGID}
+      - PUID=${PUID}
+    restart: always
