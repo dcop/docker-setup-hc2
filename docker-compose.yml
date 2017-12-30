@@ -71,7 +71,7 @@ services:
     restart: always
   plex:
     network_mode: host
-    image: lsisoarmhf/plex
+    image: lsioarmhf/plex
     container_name: plex
     volumes:
       - ${VOLUME}/.plex/config:/config
