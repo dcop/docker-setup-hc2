@@ -15,8 +15,9 @@ services:
     image: lsioarmhf/sonarr
     container_name: "sonarr"
     volumes:
-      - ${VOLUME}/.sonarr/config:/config
-      - ${VOLUME}/.sonarr/downloads:/downloads
+      - ${CONFIG_VOLUME}/.sonarr/config:/config
+      - ${VOLUME}/downloads:/downloads
+      - ${VOLUME}/tv:/tv
     ports:
       - "8989:8989"
     environment:
@@ -28,9 +29,9 @@ services:
     image: lsioarmhf/transmission
     container_name: transmission
     volumes:
-      - ${VOLUME}/.transmission/config:/config
-      - ${VOLUME}/.transmission/downloads:/downloads
-      - ${VOLUME}/.transmission/watch:/watch
+      - ${CONFIG_VOLUME}/.transmission/config:/config
+      - ${VOLUME}/downloads:/downloads
+      - ${VOLUME}/watch:/watch
     ports:
       - "9091:9091"
       - "51413:51413"
@@ -45,8 +46,8 @@ services:
     image: lsioarmhf/jackett
     container_name: jackett
     volumes:
-      - ${VOLUME}/.jackett/config:/config
-      - ${VOLUME}/.jackett/downloads/:/downloads
+      - ${CONFIG_VOLUME}/.jackett/config:/config
+      - ${VOLUME}/downloads/:/downloads
     ports:
       - "9117:9117"
     environment:
@@ -59,9 +60,9 @@ services:
     image: lsioarmhf/radarr
     container_name: radarr
     volumes:
-      - ${VOLUME}/.radarr/config:/config
-      - ${VOLUME}/.radarr/downloads:/downloads
-      - ${VOLUME}/.radarr/movies:/movies
+      - ${CONFIG_VOLUME}/.radarr/config:/config
+      - ${VOLUME}/downloads:/downloads
+      - ${VOLUME}/movies:/movies
     ports:
       - 7878:7878
     environment:
@@ -69,30 +70,57 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
     restart: always
-  plex:
+  htpcmanager:
     network_mode: host
-    image: lsioarmhf/plex
-    container_name: plex
-    volumes:
-      - ${VOLUME}/.plex/config:/config
-      - ${VOLUME}/.plex/tv:/data/tv
-      - ${VOLUME}/.plex/x264:/data/x264
-      - ${VOLUME}/.plex/xvid:/data/xvid
-    restart: always
-    environment:
-      - TZ=${TZ}
-      - PGID=${PGID}
-      - PUID=${PUID}
-  organizr:
-    network_mode: host
-    image: lsioarmhf/organizr
-    container_name: organizr
-    volumes:
-      - ${VOLUME}/.organizr/config:/config
-    ports: 
-      - 80:80
+    image: lsioarmhf/htpcmanager
+    container_name: htpcmanager
+    volumes: 
+      - ${CONFIG_VOLUME}/.htpcmanager/config:/config
+    ports:
+      - 8085:8085
     environment:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
     restart: always
+  duplicati:
+    network_mode: host
+    image: lsioarmhf/duplicati
+    container_name: duplicati
+    volumes: 
+      - ${CONFIG_VOLUME}/.duplicati/config:/config
+      - ${CONFIG_VOLUME}:/source
+    ports:
+      - 8200:8200
+    environment:
+      - TZ=${TZ}
+      - PGID=${PGID}
+      - PUID=${PUID}
+    restart: unless-stopped
+#  plex:
+#    network_mode: host
+#    image: lsioarmhf/plex
+#    container_name: plex
+#    volumes:
+#      - ${VOLUME}/.plex/config:/config
+#      - ${VOLUME}/.plex/tv:/data/tv
+#      - ${VOLUME}/.plex/x264:/data/x264
+#      - ${VOLUME}/.plex/xvid:/data/xvid
+#    restart: always
+#    environment:
+#      - TZ=${TZ}
+#      - PGID=${PGID}
+#      - PUID=${PUID}
+#  organizr:
+#    network_mode: host
+#    image: lsioarmhf/organizr
+#    container_name: organizr
+#    volumes:
+#      - ${VOLUME}/.organizr/config:/config
+#    ports: 
+#      - 80:80
+#    environment:
+#      - TZ=${TZ}
+#      - PGID=${PGID}
+#      - PUID=${PUID}
+#    restart: always
