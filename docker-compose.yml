@@ -97,6 +97,14 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
     restart: unless-stopped
+  home-assistant:
+    container_name: home-assistant
+    image: homeassistant/armhf-homeassistant
+    volumes:
+      - ${CONFIG_VOLUME}/.home-assistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    network_mode: host
 #  plex:
 #    network_mode: host
 #    image: lsioarmhf/plex
