@@ -82,7 +82,7 @@ services:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
-    restart: always
+    restart: unless-stopped
   duplicati:
     network_mode: host
     image: lsioarmhf/duplicati
