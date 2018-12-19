@@ -1,7 +1,7 @@
 version: '2'
 services:
   portainer:
-    image: portainer/portainer:arm
+    image: portainer/portainer:linux-arm
     container_name: "portainer-app"
     command: --templates http://templates/templates.json
     volumes:
@@ -23,7 +23,7 @@ services:
     environment:
       - PGID=${PGID}
       - PUID=${PUID}
-    restart: always
+    restart: unless-stopped
   transmission:
     network_mode: host
     image: lsioarmhf/transmission
@@ -40,7 +40,7 @@ services:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
-    restart: always
+    restart: unless-stopped
   jackett:
     network_mode: host
     image: lsioarmhf/jackett
@@ -105,30 +105,46 @@ services:
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     network_mode: host
-#  plex:
-#    network_mode: host
-#    image: lsioarmhf/plex
-#    container_name: plex
-#    volumes:
-#      - ${VOLUME}/.plex/config:/config
-#      - ${VOLUME}/.plex/tv:/data/tv
-#      - ${VOLUME}/.plex/x264:/data/x264
-#      - ${VOLUME}/.plex/xvid:/data/xvid
-#    restart: always
-#    environment:
-#      - TZ=${TZ}
-#      - PGID=${PGID}
-#      - PUID=${PUID}
-#  organizr:
-#    network_mode: host
-#    image: lsioarmhf/organizr
-#    container_name: organizr
-#    volumes:
-#      - ${VOLUME}/.organizr/config:/config
-#    ports: 
-#      - 80:80
-#    environment:
-#      - TZ=${TZ}
-#      - PGID=${PGID}
-#      - PUID=${PUID}
-#    restart: always
+  plex:
+    network_mode: host
+    image: xenial-pms-jessie
+    #image: lsioarmhf/plex
+    #image: bionic-pms-jessie:latest
+    container_name: plex
+    volumes:
+      - ${CONFIG_VOLUME}/.plex/config:/config
+      - ${VOLUME}/tv:/data/tv
+      - ${DATA_VOLUME}/x264:/data/x264
+      - ${DATA_VOLUME}/xvid:/data/xvid
+      - ${DATA_VOLUME}/serie:/data/serie
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - PGID=${PGID}
+      - PUID=${PUID}
+  heimdall:
+    container_name: heimdall
+    restart: unless-stopped
+    volumes:
+     - ${CONFIG_VOLUME}/.heimdall/config:/config
+    environment:
+     - PGID=${PGID}
+     - PUID=${PUID}
+     - TZ=${TZ}
+    ports:
+     - 8080:80
+     - 4433:443
+    image: linuxserver/heimdall
+  bazarr:
+    image: linuxserver/bazarr:arm32v6-latest
+    container_name: bazarr
+    environment:
+     - PUID=${PUID}
+     - PGID=${PGID}
+     - TZ=${TZ}
+    volumes:
+     - ${CONFIG_VOLUME}/.bazarr/config:/config
+     - ${VOLUME}/tv:/tv
+    ports:
+     - 6767:6767
+    restart: unless-stopped
