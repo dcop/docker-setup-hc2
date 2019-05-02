@@ -12,12 +12,13 @@ services:
     network_mode: host
   sonarr:
     network_mode: host
-    image: lsioarmhf/sonarr
+    image: linuxserver/sonarr:arm32v7-latest
     container_name: "sonarr"
     volumes:
       - ${CONFIG_VOLUME}/.sonarr/config:/config
       - ${VOLUME}/downloads:/downloads
       - ${VOLUME}/tv:/tv
+      - ${DATA_VOLUME}/serie:/serie
     ports:
       - "8989:8989"
     environment:
@@ -26,7 +27,7 @@ services:
     restart: unless-stopped
   transmission:
     network_mode: host
-    image: lsioarmhf/transmission
+    image: linuxserver/transmission:arm32v7-latest
     container_name: transmission
     volumes:
       - ${CONFIG_VOLUME}/.transmission/config:/config
@@ -43,7 +44,7 @@ services:
     restart: unless-stopped
   jackett:
     network_mode: host
-    image: lsioarmhf/jackett
+    image: linuxserver/jackett:arm32v7-latest
     container_name: jackett
     volumes:
       - ${CONFIG_VOLUME}/.jackett/config:/config
@@ -85,7 +86,7 @@ services:
     restart: unless-stopped
   duplicati:
     network_mode: host
-    image: lsioarmhf/duplicati
+    image: linuxserver/duplicati:arm32v7-latest
     container_name: duplicati
     volumes: 
       - ${CONFIG_VOLUME}/.duplicati/config:/config
@@ -97,19 +98,9 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
     restart: unless-stopped
-  home-assistant:
-    container_name: home-assistant
-    image: homeassistant/armhf-homeassistant
-    volumes:
-      - ${CONFIG_VOLUME}/.home-assistant/config:/config
-      - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
-    network_mode: host
   plex:
     network_mode: host
-    image: xenial-pms-jessie
-    #image: lsioarmhf/plex
-    #image: bionic-pms-jessie:latest
+    image: linuxserver/plex:arm32v7-latest
     container_name: plex
     volumes:
       - ${CONFIG_VOLUME}/.plex/config:/config
@@ -119,6 +110,7 @@ services:
       - ${DATA_VOLUME}/serie:/data/serie
     restart: unless-stopped
     environment:
+      - VERSION=docker
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
@@ -136,7 +128,7 @@ services:
      - 4433:443
     image: linuxserver/heimdall
   bazarr:
-    image: linuxserver/bazarr:arm32v6-latest
+    image: linuxserver/bazarr:arm32v7-latest
     container_name: bazarr
     environment:
      - PUID=${PUID}
