@@ -18,7 +18,7 @@ services:
       - ${CONFIG_VOLUME}/.sonarr/config:/config
       - ${VOLUME}/downloads:/downloads
       - ${VOLUME}/tv:/tv
-      - ${DATA_VOLUME}/serie:/serie
+      - ${DATA_VOLUME}/tv:/tv
     ports:
       - "8989:8989"
     environment:
@@ -105,7 +105,7 @@ services:
       - ${CONFIG_VOLUME}/.plex/config:/config
       - ${VOLUME}/tv:/data/tv
       - ${DATA_VOLUME}/movies:/data/movies
-      - ${DATA_VOLUME}/serie:/data/serie
+      - ${DATA_VOLUME}/tv:/data/tv
     restart: unless-stopped
     environment:
       - VERSION=docker
@@ -146,4 +146,4 @@ services:
      - ${CONFIG_VOLUME}/.jellyfin/config:/config
      - ${CONFIG_VOLUME}/.jellyfin/cache:/cache
      - ${DATA_VOLUME}/movies:/data/movies
-     - ${DATA_VOLUME}/serie:/data/serie
+     - ${DATA_VOLUME}/tv:/data/tv
