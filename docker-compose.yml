@@ -32,7 +32,6 @@ services:
     volumes:
       - ${CONFIG_VOLUME}/.transmission/config:/config
       - ${VOLUME}/downloads:/downloads
-      - ${VOLUME}/watch:/watch
     ports:
       - "9091:9091"
       - "51413:51413"
@@ -58,19 +57,19 @@ services:
     restart: always
   radarr:
     network_mode: host
-    image: lsioarmhf/radarr
+    image: linuxserver/radarr
     container_name: radarr
     volumes:
       - ${CONFIG_VOLUME}/.radarr/config:/config
       - ${VOLUME}/downloads:/downloads
-      - ${VOLUME}/movies:/movies
+      - ${DATA_VOLUME}/movies:/movies
     ports:
       - 7878:7878
     environment:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
-    restart: always
+    restart: unless-stopped
   htpcmanager:
     network_mode: host
     image: lsioarmhf/htpcmanager
@@ -105,8 +104,7 @@ services:
     volumes:
       - ${CONFIG_VOLUME}/.plex/config:/config
       - ${VOLUME}/tv:/data/tv
-      - ${DATA_VOLUME}/x264:/data/x264
-      - ${DATA_VOLUME}/xvid:/data/xvid
+      - ${DATA_VOLUME}/movies:/data/movies
       - ${DATA_VOLUME}/serie:/data/serie
     restart: unless-stopped
     environment:
@@ -140,3 +138,12 @@ services:
     ports:
      - 6767:6767
     restart: unless-stopped
+  jellyfin:  
+    container_name: jellyfin
+    image: jellyfin/jellyfin  
+    network_mode: "host"  
+    volumes:  
+     - ${CONFIG_VOLUME}/.jellyfin/config:/config
+     - ${CONFIG_VOLUME}/.jellyfin/cache:/cache
+     - ${DATA_VOLUME}/movies:/data/movies
+     - ${DATA_VOLUME}/serie:/data/serie
