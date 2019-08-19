@@ -17,7 +17,6 @@ services:
     volumes:
       - ${CONFIG_VOLUME}/.sonarr/config:/config
       - ${VOLUME}/downloads:/downloads
-      - ${VOLUME}/tv:/tv
       - ${DATA_VOLUME}/tv:/tv
     ports:
       - "8989:8989"
@@ -103,7 +102,7 @@ services:
     container_name: plex
     volumes:
       - ${CONFIG_VOLUME}/.plex/config:/config
-      - ${VOLUME}/tv:/data/tv
+      - ${VOLUME}/tv:/downloads/tv
       - ${DATA_VOLUME}/movies:/data/movies
       - ${DATA_VOLUME}/tv:/data/tv
     restart: unless-stopped
