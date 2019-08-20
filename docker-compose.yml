@@ -61,7 +61,7 @@ services:
     volumes:
       - ${CONFIG_VOLUME}/.radarr/config:/config
       - ${VOLUME}/downloads:/downloads
-      - ${DATA_VOLUME}/movies:/movies
+      - ${DATA_VOLUME}/movies:/data/movies
     ports:
       - 7878:7878
     environment:
