@@ -12,11 +12,12 @@ services:
     network_mode: host
   sonarr:
     network_mode: host
-    image: linuxserver/sonarr:arm32v7-latest
+    image: linuxserver/sonarr
     container_name: "sonarr"
     volumes:
       - ${CONFIG_VOLUME}/.sonarr/config:/config
       - ${VOLUME}/downloads:/downloads
+      - ${VOLUME}/tv:/tv_local  
       - ${DATA_VOLUME}/tv:/tv
     ports:
       - "8989:8989"
@@ -26,7 +27,7 @@ services:
     restart: unless-stopped
   transmission:
     network_mode: host
-    image: linuxserver/transmission:arm32v7-latest
+    image: linuxserver/transmission
     container_name: transmission
     volumes:
       - ${CONFIG_VOLUME}/.transmission/config:/config
@@ -42,7 +43,7 @@ services:
     restart: unless-stopped
   jackett:
     network_mode: host
-    image: linuxserver/jackett:arm32v7-latest
+    image: linuxserver/jackett
     container_name: jackett
     volumes:
       - ${CONFIG_VOLUME}/.jackett/config:/config
@@ -84,7 +85,7 @@ services:
     restart: unless-stopped
   duplicati:
     network_mode: host
-    image: linuxserver/duplicati:arm32v7-latest
+    image: linuxserver/duplicati
     container_name: duplicati
     volumes: 
       - ${CONFIG_VOLUME}/.duplicati/config:/config
@@ -98,11 +99,11 @@ services:
     restart: unless-stopped
   plex:
     network_mode: host
-    image: linuxserver/plex:arm32v7-latest
+    image: linuxserver/plex
     container_name: plex
     volumes:
       - ${CONFIG_VOLUME}/.plex/config:/config
-      - ${VOLUME}/tv:/downloads/tv
+      - ${VOLUME}/downloads/complete:/downloads
       - ${DATA_VOLUME}/movies:/data/movies
       - ${DATA_VOLUME}/tv:/data/tv
     restart: unless-stopped
@@ -125,7 +126,7 @@ services:
      - 4433:443
     image: linuxserver/heimdall
   bazarr:
-    image: linuxserver/bazarr:arm32v7-latest
+    image: linuxserver/bazarr
     container_name: bazarr
     environment:
      - PUID=${PUID}
@@ -133,7 +134,7 @@ services:
      - TZ=${TZ}
     volumes:
      - ${CONFIG_VOLUME}/.bazarr/config:/config
-     - ${VOLUME}/tv:/tv
+     - ${DATA_VOLUME}/tv:/tv
     ports:
      - 6767:6767
     restart: unless-stopped
