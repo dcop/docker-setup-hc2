@@ -1,97 +1,96 @@
 version: '2'
 services:
+  vpn:
+    image: bubuntux/nordvpn
+    network_mode: bridge
+    cap_add:
+      - net_admin
+    devices:
+      - /dev/net/tun
+    environment:
+      - USER=${VPNUSER}
+      - PASS=${VPNPASS}
+      - CONNECT=${COUNTRY}
+      - TECHNOLOGY=OpenVPN
+      - NETWORK=192.168.1.0/24
+      - TZ=${TZ}
+    ports:
+      - 8080:80         # heimdall
+      - 4433:443        # heimdall      
+      - 9000:9000       # portainer
+      - 8989:8989       # sonarr
+      - 6767:6767       # bazarr
+      - 8200:8200       # duplicati
+      - 7878:7878       # radarr
+      - 9117:9117       # jackett  
+      - 9091:9091       # transmission
+      - 51413:51413     # transmission
+      - 51413:51413/udp # transmission  
+    restart: unless-stopped
   portainer:
     image: portainer/portainer:linux-arm
     container_name: "portainer-app"
     command: --templates http://templates/templates.json
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "9000:9000"
+      - ${CONFIG_VOLUME}/.portainer/config:/data
     restart: always
-    network_mode: host
+    network_mode: service:vpn
   sonarr:
-    network_mode: host
+    network_mode: service:vpn
     image: linuxserver/sonarr
     container_name: "sonarr"
     volumes:
       - ${CONFIG_VOLUME}/.sonarr/config:/config
-      - ${VOLUME}/downloads:/downloads
-      - ${VOLUME}/tv:/tv_local  
+      - ${DATA_VOLUME}/downloads:/downloads
       - ${DATA_VOLUME}/tv:/tv
-    ports:
-      - "8989:8989"
     environment:
       - PGID=${PGID}
       - PUID=${PUID}
     restart: unless-stopped
   transmission:
-    network_mode: host
+    network_mode: service:vpn
     image: linuxserver/transmission
     container_name: transmission
     volumes:
       - ${CONFIG_VOLUME}/.transmission/config:/config
       - ${VOLUME}/downloads:/downloads
-    ports:
-      - "9091:9091"
-      - "51413:51413"
-      - "51413:51413/udp"
     environment:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
     restart: unless-stopped
   jackett:
-    network_mode: host
+    network_mode: service:vpn
     image: linuxserver/jackett
     container_name: jackett
     volumes:
       - ${CONFIG_VOLUME}/.jackett/config:/config
-      - ${VOLUME}/downloads/:/downloads
-    ports:
-      - "9117:9117"
     environment:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
     restart: always
   radarr:
-    network_mode: host
+    network_mode: service:vpn
     image: linuxserver/radarr
     container_name: radarr
     volumes:
       - ${CONFIG_VOLUME}/.radarr/config:/config
-      - ${VOLUME}/downloads:/downloads
-      - ${DATA_VOLUME}/movies:/data/movies
-    ports:
-      - 7878:7878
-    environment:
-      - TZ=${TZ}
-      - PGID=${PGID}
-      - PUID=${PUID}
-    restart: unless-stopped
-  htpcmanager:
-    network_mode: host
-    image: lsioarmhf/htpcmanager
-    container_name: htpcmanager
-    volumes: 
-      - ${CONFIG_VOLUME}/.htpcmanager/config:/config
-    ports:
-      - 8085:8085
+      - ${DATA_VOLUME}/downloads:/downloads
+      - ${DATA_VOLUME}/movies:/movies
     environment:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
     restart: unless-stopped
   duplicati:
-    network_mode: host
+    network_mode: service:vpn
     image: linuxserver/duplicati
     container_name: duplicati
     volumes: 
       - ${CONFIG_VOLUME}/.duplicati/config:/config
       - ${CONFIG_VOLUME}:/source
-    ports:
-      - 8200:8200
     environment:
       - TZ=${TZ}
       - PGID=${PGID}
@@ -103,9 +102,8 @@ services:
     container_name: plex
     volumes:
       - ${CONFIG_VOLUME}/.plex/config:/config
-      - ${VOLUME}/downloads/complete:/downloads
-      - ${DATA_VOLUME}/movies:/data/movies
-      - ${DATA_VOLUME}/tv:/data/tv
+      - ${DATA_VOLUME}/movies:/movies
+      - ${DATA_VOLUME}/tv:/tv
     restart: unless-stopped
     environment:
       - VERSION=docker
@@ -121,10 +119,11 @@ services:
      - PGID=${PGID}
      - PUID=${PUID}
      - TZ=${TZ}
+    image: linuxserver/heimdall
     ports:
      - 8080:80
      - 4433:443
-    image: linuxserver/heimdall
+    network_mode: host
   bazarr:
     image: linuxserver/bazarr
     container_name: bazarr
@@ -135,15 +134,6 @@ services:
     volumes:
      - ${CONFIG_VOLUME}/.bazarr/config:/config
      - ${DATA_VOLUME}/tv:/tv
-    ports:
-     - 6767:6767
+     - ${DATA_VOLUME}/movies:/movies
     restart: unless-stopped
-  jellyfin:  
-    container_name: jellyfin
-    image: jellyfin/jellyfin  
-    network_mode: "host"  
-    volumes:  
-     - ${CONFIG_VOLUME}/.jellyfin/config:/config
-     - ${CONFIG_VOLUME}/.jellyfin/cache:/cache
-     - ${DATA_VOLUME}/movies:/data/movies
-     - ${DATA_VOLUME}/tv:/data/tv
+    network_mode: service:vpn
