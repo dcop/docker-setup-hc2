@@ -11,7 +11,7 @@ services:
       - USER=${VPNUSER}
       - PASS=${VPNPASS}
       - CONNECT=${COUNTRY}
-      - TECHNOLOGY=OpenVPN
+      - TECHNOLOGY=NordLynx
       - NETWORK=192.168.1.0/24
       - TZ=${TZ}
     ports:
