@@ -1,7 +1,8 @@
-version: '2'
+version: '3'
 services:
   vpn:
     image: bubuntux/nordvpn
+    container_name: nordvpn
     network_mode: bridge
     cap_add:
       - net_admin
@@ -15,12 +16,8 @@ services:
       - NETWORK=192.168.1.0/24
       - TZ=${TZ}
     ports:
-      - 8080:80         # heimdall
-      - 4433:443        # heimdall      
-      - 9000:9000       # portainer
       - 8989:8989       # sonarr
       - 6767:6767       # bazarr
-      - 8200:8200       # duplicati
       - 7878:7878       # radarr
       - 9117:9117       # jackett  
       - 9091:9091       # transmission
@@ -28,14 +25,13 @@ services:
       - 51413:51413/udp # transmission  
     restart: unless-stopped
   portainer:
+    container_name: "portainer"
     image: portainer/portainer:linux-arm
-    container_name: "portainer-app"
-    command: --templates http://templates/templates.json
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${CONFIG_VOLUME}/.portainer/config:/data
     restart: always
-    network_mode: service:vpn
+    network_mode: host
   sonarr:
     network_mode: service:vpn
     image: linuxserver/sonarr
@@ -85,7 +81,7 @@ services:
       - PUID=${PUID}
     restart: unless-stopped
   duplicati:
-    network_mode: service:vpn
+    network_mode: host
     image: linuxserver/duplicati
     container_name: duplicati
     volumes: 
@@ -110,20 +106,6 @@ services:
       - TZ=${TZ}
       - PGID=${PGID}
       - PUID=${PUID}
-  heimdall:
-    container_name: heimdall
-    restart: unless-stopped
-    volumes:
-     - ${CONFIG_VOLUME}/.heimdall/config:/config
-    environment:
-     - PGID=${PGID}
-     - PUID=${PUID}
-     - TZ=${TZ}
-    image: linuxserver/heimdall
-    ports:
-     - 8080:80
-     - 4433:443
-    network_mode: host
   bazarr:
     image: linuxserver/bazarr
     container_name: bazarr
