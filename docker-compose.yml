@@ -1,7 +1,7 @@
 version: '3'
 services:
   vpn:
-    image: bubuntux/nordvpn
+    image: bubuntux/nordvpn:3.7.4
     container_name: nordvpn
     network_mode: bridge
     cap_add:
@@ -26,7 +26,7 @@ services:
     restart: unless-stopped
   portainer:
     container_name: "portainer"
-    image: portainer/portainer:linux-arm
+    image: portainer/portainer-ce
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${CONFIG_VOLUME}/.portainer/config:/data
@@ -119,3 +119,24 @@ services:
      - ${DATA_VOLUME}/movies:/movies
     restart: unless-stopped
     network_mode: service:vpn
+  wireguard:
+    image: linuxserver/wireguard
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - SERVERURL=dcop.duckdns.org #optional
+      - SERVERPORT=51820 #optional
+      - PEERS=2 #optional
+      - PEERDNS=auto #optional
+      - INTERNAL_SUBNET=10.13.13.0 #optional
+    volumes:
+      - ${CONFIG_VOLUME}/.wireguard/config:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - 28150:51820/udp
+    restart: unless-stopped
