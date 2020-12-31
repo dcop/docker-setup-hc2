@@ -1,11 +1,14 @@
 version: '3'
 services:
   vpn:
-    image: bubuntux/nordvpn:3.7.4
+    image: bubuntux/nordvpn
     container_name: nordvpn
     network_mode: bridge
     cap_add:
-      - net_admin
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.rp_filter=2
     devices:
       - /dev/net/tun
     environment:
@@ -23,7 +26,7 @@ services:
       - 9091:9091       # transmission
       - 51413:51413     # transmission
       - 51413:51413/udp # transmission  
-    restart: unless-stopped
+    restart: always
   portainer:
     container_name: "portainer"
     image: portainer/portainer-ce
@@ -94,7 +97,7 @@ services:
     restart: unless-stopped
   plex:
     network_mode: host
-    image: linuxserver/plex
+    image: linuxserver/plex:bionic
     container_name: plex
     volumes:
       - ${CONFIG_VOLUME}/.plex/config:/config
