@@ -18,6 +18,7 @@ services:
       - TECHNOLOGY=NordLynx
       - NETWORK=192.168.1.0/24
       - TZ=${TZ}
+      - DEBUG=false
     ports:
       - 8989:8989       # sonarr
       - 6767:6767       # bazarr
@@ -97,7 +98,7 @@ services:
     restart: unless-stopped
   plex:
     network_mode: host
-    image: linuxserver/plex:bionic
+    image: linuxserver/plex
     container_name: plex
     volumes:
       - ${CONFIG_VOLUME}/.plex/config:/config
@@ -142,4 +143,25 @@ services:
       - /lib/modules:/lib/modules
     ports:
       - 28150:51820/udp
+    restart: unless-stopped
+  heimdall:
+    image: ghcr.io/linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_VOLUME}/.heimdall/config:/config
+    ports:
+      - 8090:80
+      - 4343:443
+    restart: unless-stopped
+  duckdns:
+    image: ghcr.io/linuxserver/duckdns
+    container_name: duckdns
+    environment:
+      - TZ=Europe/Rome
+      - SUBDOMAINS=dcop
+      - TOKEN=${DDNS_TOKEN}
     restart: unless-stopped
