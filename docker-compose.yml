@@ -78,7 +78,6 @@ services:
      - ${DATA_VOLUME}/tv:/tv
      - ${DATA_VOLUME}/movies:/movies
     restart: unless-stopped
-    network_mode: service:vpn
   homarr:
     container_name: homarr
     image: ghcr.io/ajnart/homarr:latest
