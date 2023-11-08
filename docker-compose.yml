@@ -1,33 +1,5 @@
 version: '3'
 services:
-  vpn:
-    image: bubuntux/nordvpn
-    container_name: nordvpn
-    network_mode: bridge
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    sysctls:
-      - net.ipv4.conf.all.rp_filter=2
-    devices:
-      - /dev/net/tun
-    environment:
-      - USER=${VPNUSER}
-      - PASS=${VPNPASS}
-      - CONNECT=${COUNTRY}
-      - TECHNOLOGY=NordLynx
-      - NETWORK=192.168.1.0/24
-      - TZ=${TZ}
-      - DEBUG=false
-    ports:
-      - 8989:8989       # sonarr
-      - 6767:6767       # bazarr
-      - 7878:7878       # radarr
-      - 9117:9117       # jackett  
-      - 9091:9091       # transmission
-      - 51413:51413     # transmission
-      - 51413:51413/udp # transmission  
-    restart: always
   portainer:
     container_name: "portainer"
     image: portainer/portainer-ce
@@ -37,7 +9,6 @@ services:
     restart: always
     network_mode: host
   sonarr:
-    network_mode: service:vpn
     image: linuxserver/sonarr
     container_name: "sonarr"
     volumes:
@@ -49,7 +20,6 @@ services:
       - PUID=${PUID}
     restart: unless-stopped
   transmission:
-    network_mode: service:vpn
     image: linuxserver/transmission
     container_name: transmission
     volumes:
@@ -61,7 +31,6 @@ services:
       - PUID=${PUID}
     restart: unless-stopped
   jackett:
-    network_mode: service:vpn
     image: linuxserver/jackett
     container_name: jackett
     volumes:
@@ -72,7 +41,6 @@ services:
       - PUID=${PUID}
     restart: always
   radarr:
-    network_mode: service:vpn
     image: linuxserver/radarr
     container_name: radarr
     volumes:
@@ -85,7 +53,6 @@ services:
       - PUID=${PUID}
     restart: unless-stopped
   duplicati:
-    network_mode: host
     image: linuxserver/duplicati
     container_name: duplicati
     volumes: 
