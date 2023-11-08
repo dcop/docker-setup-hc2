@@ -9,7 +9,7 @@ services:
     restart: always
     network_mode: host
   sonarr:
-    image: linuxserver/sonarr
+    image: linuxserver/sonarr:arm32v7-3.0.9
     container_name: "sonarr"
     volumes:
       - ${CONFIG_VOLUME}/.sonarr/config:/config
@@ -20,7 +20,7 @@ services:
       - PUID=${PUID}
     restart: unless-stopped
   transmission:
-    image: linuxserver/transmission
+    image: linuxserver/transmission:arm32v7-4.0.3
     container_name: transmission
     volumes:
       - ${CONFIG_VOLUME}/.transmission/config:/config
@@ -31,7 +31,7 @@ services:
       - PUID=${PUID}
     restart: unless-stopped
   jackett:
-    image: linuxserver/jackett
+    image: linuxserver/jackett:arm32v7-0.21.352
     container_name: jackett
     volumes:
       - ${CONFIG_VOLUME}/.jackett/config:/config
@@ -41,7 +41,7 @@ services:
       - PUID=${PUID}
     restart: always
   radarr:
-    image: linuxserver/radarr
+    image: linuxserver/radarr:arm32v7-4.5.2
     container_name: radarr
     volumes:
       - ${CONFIG_VOLUME}/.radarr/config:/config
@@ -52,20 +52,9 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
     restart: unless-stopped
-  duplicati:
-    image: linuxserver/duplicati
-    container_name: duplicati
-    volumes: 
-      - ${CONFIG_VOLUME}/.duplicati/config:/config
-      - ${CONFIG_VOLUME}:/source
-    environment:
-      - TZ=${TZ}
-      - PGID=${PGID}
-      - PUID=${PUID}
-    restart: unless-stopped
   plex:
     network_mode: host
-    image: linuxserver/plex
+    image: linuxserver/plex:arm32v7-1.32.4
     container_name: plex
     volumes:
       - ${CONFIG_VOLUME}/.plex/config:/config
@@ -78,7 +67,7 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
   bazarr:
-    image: linuxserver/bazarr
+    image: linuxserver/bazarr:arm32v7-1.2.2
     container_name: bazarr
     environment:
      - PUID=${PUID}
@@ -90,29 +79,17 @@ services:
      - ${DATA_VOLUME}/movies:/movies
     restart: unless-stopped
     network_mode: service:vpn
-  wireguard:
-    image: linuxserver/wireguard
-    container_name: wireguard
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - SERVERURL=dcop.duckdns.org #optional
-      - SERVERPORT=51820 #optional
-      - PEERS=2 #optional
-      - PEERDNS=auto #optional
-      - INTERNAL_SUBNET=10.13.13.0 #optional
-    volumes:
-      - ${CONFIG_VOLUME}/.wireguard/config:/config
-      - /lib/modules:/lib/modules
-    ports:
-      - 28150:51820/udp
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
     restart: unless-stopped
+    volumes:
+      - ${CONFIG_VOLUME}/.homarr/configs:/app/data/configs
+      - ${CONFIG_VOLUME}/.homarr/icons:/app/public/icons
+    ports:
+      - '7575:7575'
   heimdall:
-    image: ghcr.io/linuxserver/heimdall
+    image: ghcr.io/linuxserver/heimdall:arm32v7-2.5.6
     container_name: heimdall
     environment:
       - PUID=${PUID}
