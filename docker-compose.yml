@@ -124,11 +124,3 @@ services:
       - 8090:80
       - 4343:443
     restart: unless-stopped
-  duckdns:
-    image: ghcr.io/linuxserver/duckdns
-    container_name: duckdns
-    environment:
-      - TZ=Europe/Rome
-      - SUBDOMAINS=dcop
-      - TOKEN=${DDNS_TOKEN}
-    restart: unless-stopped
